@@ -3,6 +3,16 @@ hostname=$(hostname)
 date=$(date +"%Y-%m-%d")
 backupDir="/backups"
 
+while getopts u:h: flag
+do
+    case "${flag}" in
+        u) backupServerUser=${OPTARG};;
+        h) backupServerHost=${OPTARG};;
+    eac
+done
+backupServerUser="caleb"
+backupServerHost="192.168.0.122"
+
 cd /
 echo $(pwd)
 # Create backup dir if it does not exist
@@ -48,6 +58,11 @@ function deleteOldBackups()
             continue
         fi 
     done
+}
+
+function syncToRemote()
+{
+    rsync -a $backupDir $backupServerUser@$backupServerHost:$backupDir
 }
 
 function main()
