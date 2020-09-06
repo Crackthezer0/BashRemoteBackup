@@ -8,7 +8,7 @@ do
     case "${flag}" in
         u) backupServerUser=${OPTARG};;
         h) backupServerHost=${OPTARG};;
-    eac
+    esac
 done
 backupServerUser="caleb"
 backupServerHost="192.168.0.122"
@@ -43,10 +43,11 @@ function deleteOldBackups()
                 fileDate=$(date -d "${BASH_REMATCH[0]}")
                 cutoffDate=$(date -d "-1 month")
 
-                if [[ "$fileDate" > "$cutoffDate" ]]; then
+                if [[ $fileDate < $cutoffDate ]]; then
+                    echo "skipped"
                     continue
                 else
-                    rm $fileName
+                    sudo rm $fileName
                     echo "Deleted ${fileName}"
                     continue
                 fi
@@ -62,7 +63,7 @@ function deleteOldBackups()
 
 function syncToRemote()
 {
-    rsync -a $backupDir $backupServerUser@$backupServerHost:$backupDir
+    rsync -a $backupDir "$backupServerUser"@"$backupServerHost":$backupDir
 }
 
 function main()
