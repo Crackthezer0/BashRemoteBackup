@@ -13,16 +13,18 @@ done
 backupServerUser="caleb"
 backupServerHost="192.168.0.122"
 
-cd /
-echo $(pwd)
 # Create backup dir if it does not exist
 function backup ()
 {
     if [ -d "$backupDir" ]; then
-        sudo tar -czvf "${backupDir}/${hostname}_${date}.tar.gz" "home/$(whoami)"
-        echo "Ran backup"
+        tar -czvf "${backupDir}/${hostname}_${date}.tar.gz" "/home/$(whoami)"
     else
-        mkdir ${backupDir}
+        dirFail="$(mkdir ${backupDir} 2>&1 > /dev/null)"
+        echo $dirFail
+        if [ ! -z dirFail ]; then
+            echo "Directory creation failed"
+            exit
+        fi
         # Recursively call to create dir
         echo "Backup dir created"
         backup
@@ -47,7 +49,7 @@ function deleteOldBackups()
                     echo "skipped"
                     continue
                 else
-                    sudo rm $fileName
+                    rm $fileName
                     echo "Deleted ${fileName}"
                     continue
                 fi
@@ -63,12 +65,13 @@ function deleteOldBackups()
 
 function syncToRemote()
 {
-    rsync -a $backupDir "$backupServerUser"@"$backupServerHost":$backupDir
+    rsync -a $backupDir "$backupServerUser"@"$backupServerHost:/backups"
 }
 
 function main()
 {
     deleteOldBackups
     backup
+    syncToRemote
 }
 main
