@@ -11,7 +11,7 @@ do
     esac
 done
 backupServerUser="caleb"
-backupServerHost="192.168.0.122"
+backupServerHost="collective-unconscious"
 
 # Create backup dir if it does not exist
 function backup ()
@@ -67,13 +67,13 @@ function deleteOldBackups()
 
 function syncToRemote()
 {
-    rsync -a $backupDir "$backupServerUser"@"$backupServerHost:/backups"
+    rsync -a --progress $backupDir/* "$backupServerUser"@"$backupServerHost:/backups" > $backupDir/rsync.progress
 }
 
 function main()
 {
     deleteOldBackups
-    backup
+    #backup
     syncToRemote
 }
 main
