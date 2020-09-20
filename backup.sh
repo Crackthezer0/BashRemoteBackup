@@ -17,7 +17,10 @@ backupServerHost="192.168.0.122"
 function backup ()
 {
     if [ -d "$backupDir" ]; then
-        tar -czvf "${backupDir}/${hostname}_${date}.tar.gz" "/home/$(whoami)"
+        backupFail=$(tar -czvf "${backupDir}/${hostname}_${date}.tar.gz" "/home/$(whoami)" 2>&1 > /dev/null)
+        if [ ! -z backupFail ]; then
+        echo "Archive creation failed"
+        exit
     else
         dirFail="$(mkdir ${backupDir} 2>&1 > /dev/null)"
         echo $dirFail
