@@ -36,7 +36,6 @@ function deleteOldBackups()
 {
     files=(${backupDir}/*)
     for fileName in ${files[@]}; do
-        # IFS='_' read -ra DATE <<< "$fileName"
         
         # Check if date is older than one month
         if [[ $fileName =~ [0-9]{4}-[0-9]{2}-[0-9]{2} ]]; then
