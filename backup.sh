@@ -65,13 +65,13 @@ function deleteOldBackups()
 
 function syncToRemote()
 {
-    sudo rsync -a $backupDir "$backupServerUser"@"$backupServerHost:/backups"
+    rsync -a --progress $backupDir/* "$backupServerUser"@"$backupServerHost:/backups" > $backupDir/rsync.progress
 }
 
 function main()
 {
     deleteOldBackups
-    backup
+    #backup
     syncToRemote
 }
 main
