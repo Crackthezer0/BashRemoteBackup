@@ -11,12 +11,13 @@ do
     esac
 done
 backupServerUser="caleb"
-backupServerHost="192.168.0.122"
+backupServerHost="collective-unconscious"
 
 # Create backup dir if it does not exist
 function backup ()
 {
     if [ -d "$backupDir" ]; then
+	    # TODO check if current backup file for today exists and overwrite
         tar -czvf "${backupDir}/${hostname}_${date}.tar.gz" "/home/$(whoami)"
     else
         dirFail="$(mkdir ${backupDir} 2>&1 > /dev/null)"
@@ -64,7 +65,7 @@ function deleteOldBackups()
 
 function syncToRemote()
 {
-    rsync -a $backupDir "$backupServerUser"@"$backupServerHost:/backups"
+    sudo rsync -a $backupDir "$backupServerUser"@"$backupServerHost:/backups"
 }
 
 function main()
