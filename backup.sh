@@ -19,8 +19,9 @@ function backup ()
     if [ -d "$backupDir" ]; then
         backupFail=$(tar -czvf "${backupDir}/${hostname}_${date}.tar.gz" "/home/$(whoami)" 2>&1 > /dev/null)
         if [ ! -z backupFail ]; then
-        echo "Archive creation failed"
-        exit
+            echo "Archive creation failed"
+            exit
+        fi
     else
         dirFail="$(mkdir ${backupDir} 2>&1 > /dev/null)"
         echo $dirFail
