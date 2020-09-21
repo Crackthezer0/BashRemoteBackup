@@ -17,8 +17,11 @@ backupServerHost="collective-unconscious"
 function backup ()
 {
     if [ -d "$backupDir" ]; then
-        backupFail=$(tar -czvf "${backupDir}/${hostname}_${date}.tar.gz" "/home/$(whoami)" 2>&1 > /dev/null)
-        if [ ! -z backupFail ]; then
+        rm tar.errors
+        tar -czvf "${backupDir}/${hostname}_${date}.tar.gz" -C "/home" "$(whoami)" 2> tar.errors
+        backupFail=$(wc -l <tar.errors)
+        if [ $(($backupFail)) != 0 ]; then
+            echo $backupFail
             echo "Archive creation failed"
             exit
         fi
@@ -74,7 +77,7 @@ function syncToRemote()
 function main()
 {
     deleteOldBackups
-    #backup
+    backup
     syncToRemote
 }
 main
